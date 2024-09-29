@@ -7,7 +7,7 @@ import Link from 'next/link';
 interface AIWebsite {
     id: string;
     name: string;
-    description: string;
+    description: string[];
     tags: string[];
     link: string;
     keyFeatures: string[];
@@ -112,7 +112,11 @@ function ShowContent() {
                                 Truy cập trang web
                             </a>
                         </div>
-                        <p className="text-gray-300 mb-4">{website.description}</p>
+                        <p className="text-gray-300 mb-4 whitespace-pre-wrap">
+                            {Array.isArray(website.description)
+                                ? website.description.join('\n\n')
+                                : website.description}
+                        </p>
                         {website.keyFeatures && website.keyFeatures.length > 0 && (
                             <div>
                                 <strong className="text-blue-300">Tính năng chính:</strong>

@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 interface AIWebsite {
     id: string;
     name: string;
-    description: string;
+    description: string[];
     tags: string[];
     link: string;
 }
@@ -110,7 +110,7 @@ function SearchContent() {
                                     <h2 className="text-xl font-semibold mb-2 text-blue-300">{website.name}</h2>
                                     <div className="text-gray-300 mb-4 flex-grow overflow-hidden">
                                         <p className="line-clamp-3">
-                                            {website.description}
+                                            {website.description[0]}
                                         </p>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
