@@ -16,6 +16,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [allTags, setAllTags] = useState<string[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,6 +28,11 @@ export default function Home() {
         }
         const data = await response.json();
         setAiWebsites(data);
+
+        // Extract all unique tags
+        const tags = Array.from(new Set(data.flatMap((website: AIWebsite) => website.tags))) as string[];
+        setAllTags(tags);
+
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -78,27 +84,16 @@ export default function Home() {
               </button>
             </div>
             <div className="flex flex-wrap justify-center gap-4 mt-6">
-              <button
-                className="flex items-center bg-[#6366F1] hover:bg-[#93C5FD] text-white rounded-full px-4 py-2 transition-colors duration-300"
-                onClick={() => handleTagSearch('Chat')}
-              >
-                <FaSearch className="mr-2" />
-                Chat
-              </button>
-              <button
-                className="flex items-center bg-[#6366F1] hover:bg-[#93C5FD] text-white rounded-full px-4 py-2 transition-colors duration-300"
-                onClick={() => handleTagSearch('Data')}
-              >
-                <FaSearch className="mr-2" />
-                Data
-              </button>
-              <button
-                className="flex items-center bg-[#6366F1] hover:bg-[#93C5FD] text-white rounded-full px-4 py-2 transition-colors duration-300"
-                onClick={() => handleTagSearch('Video')}
-              >
-                <FaSearch className="mr-2" />
-                Video
-              </button>
+              {allTags.map((tag, index) => (
+                <button
+                  key={index}
+                  className="flex items-center bg-[#6366F1] hover:bg-[#93C5FD] text-white rounded-full px-4 py-2 transition-colors duration-300"
+                  onClick={() => handleTagSearch(tag)}
+                >
+                  <FaSearch className="mr-2" />
+                  {tag}
+                </button>
+              ))}
             </div>
           </div>
         </div>
