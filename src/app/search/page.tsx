@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { FaSearch, FaSpinner } from 'react-icons/fa';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -11,7 +11,7 @@ interface AIWebsite {
     link: string;
 }
 
-export default function Search() {
+function SearchContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [aiWebsites, setAiWebsites] = useState<AIWebsite[]>([]);
@@ -33,6 +33,7 @@ export default function Search() {
             setIsTagSearch(true);
             handleSearch(tag, 'tag');
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
 
     const handleSearch = async (term: string = searchTerm, type: 'q' | 'tag' = 'q') => {
@@ -135,5 +136,13 @@ export default function Search() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function Search() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <SearchContent />
+        </Suspense>
     );
 }

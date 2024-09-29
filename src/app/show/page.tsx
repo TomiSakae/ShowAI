@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { FaSpinner, FaSearch } from 'react-icons/fa';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ interface AIWebsite {
     keyFeatures: string[];
 }
 
-export default function Show() {
+function ShowContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [website, setWebsite] = useState<AIWebsite | null>(null);
@@ -72,7 +72,7 @@ export default function Show() {
                                 onKeyPress={(e) => e.key === 'Enter' && handleInputSearch()}
                             />
                             <button
-                                className="bg-[#6366F1] hover:bg-[#93C5FD] text-white rounded-full px-4 py-2 ml-2 transition-colors duration-300"
+                                className="bg-white text-black rounded-full px-4 py-2 ml-2"
                                 onClick={handleInputSearch}
                             >
                                 <FaSearch />
@@ -130,5 +130,13 @@ export default function Show() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function Show() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ShowContent />
+        </Suspense>
     );
 }
