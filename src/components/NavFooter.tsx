@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
 const NavBar = () => (
-    <nav className="bg-gray-800 text-white p-4">
-        <div className="container mx-auto flex justify-between items-center">
-            <Link href="/" className="text-xl font-bold">
+    <nav className="bg-[#3E52E8] text-white p-4">
+        <div className="container md:mx-4 flex justify-between items-center">
+            <Link href="/" className="text-3xl font-bold">
                 ShowAI
             </Link>
         </div>
@@ -11,9 +11,9 @@ const NavBar = () => (
 );
 
 const Footer = () => (
-    <footer className="bg-gray-800 text-white p-4 mt-8">
+    <footer className="bg-[#3E52E8] text-white p-4">
         <div className="container mx-auto flex flex-col items-center justify-center">
-            <div className="text-center">
+            <div className="text-center font-bold text-lg">
                 <p>ShowAI</p>
             </div>
         </div>
