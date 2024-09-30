@@ -32,7 +32,7 @@ function ShowContent() {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await fetch(`https://vercel-api-umber-ten.vercel.app/api/showai?id=${id}`);
+            const response = await fetch(`https://vercel-api-five-nu.vercel.app/api/showai?id=${id}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
