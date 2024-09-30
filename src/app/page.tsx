@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
+import { FaSpinner } from 'react-icons/fa'; // Add this import
 
 interface AIWebsite {
   id: string;
@@ -99,7 +100,15 @@ export default function Home() {
         </div>
       </div>
       <div className="px-4 py-8">
-        {!isLoading && !error && (
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <FaSpinner className="animate-spin text-4xl text-blue-500" />
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500">
+            {error}
+          </div>
+        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {aiWebsites.map((website, index) => (
               <div
