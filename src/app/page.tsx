@@ -1,15 +1,29 @@
 'use client'
-import React, { useState, useEffect } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaSearch, FaSpinner, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import { FaSpinner } from 'react-icons/fa'; // Add this import
 
 interface AIWebsite {
+  _id: string;
   id: string;
   name: string;
   description: string[];
   tags: string[];
   link: string;
+  keyFeatures: string[];
+}
+
+interface PaginationInfo {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+}
+
+interface ApiResponse {
+  data: AIWebsite[];
+  pagination: PaginationInfo;
+  tags: string[];
 }
 
 export default function Home() {
@@ -18,32 +32,48 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [allTags, setAllTags] = useState<string[]>([]);
+  const [paginationInfo, setPaginationInfo] = useState<PaginationInfo | null>(null);
   const router = useRouter();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('https://vercel-api-five-nu.vercel.app/api/showai');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setAiWebsites(data);
+    fetchData(1);
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
-        // Extract all unique tags
-        const tags = Array.from(new Set(data.flatMap((website: AIWebsite) => website.tags))) as string[];
-        setAllTags(tags);
+  const fetchData = async (page: number) => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
 
-        setIsLoading(false);
-      } catch (error) {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`https://vercel-api-five-nu.vercel.app/api/showai?page=${page}`, {
+        signal: abortControllerRef.current.signal
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const apiResponse: ApiResponse = await response.json();
+      setAiWebsites(apiResponse.data);
+      setPaginationInfo(apiResponse.pagination);
+      setAllTags(apiResponse.tags);
+      setIsLoading(false);
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log('Fetch aborted');
+      } else {
         console.error('Error fetching data:', error);
         setError('Failed to fetch data');
         setIsLoading(false);
       }
-    };
-
-    fetchData();
-  }, []);
+    }
+  };
 
   const handleSearch = (term: string = searchTerm) => {
     if (term.trim()) {
@@ -57,6 +87,13 @@ export default function Home() {
 
   const handleWebsiteClick = (id: string) => {
     router.push(`/show?id=${id}`);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= (paginationInfo?.totalPages || 1)) {
+      setPaginationInfo(prev => prev ? { ...prev, currentPage: newPage } : null);
+      fetchData(newPage);
+    }
   };
 
   return (
@@ -138,6 +175,27 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        {paginationInfo && (
+          <div className="mt-8 flex justify-center items-center space-x-4">
+            {paginationInfo.currentPage > 1 && (
+              <button
+                className="text-blue-500 hover:text-blue-700"
+                onClick={() => handlePageChange(paginationInfo.currentPage - 1)}
+              >
+                <FaChevronLeft />
+              </button>
+            )}
+            <span>{paginationInfo.currentPage}</span>
+            {paginationInfo.currentPage < paginationInfo.totalPages && (
+              <button
+                className="text-blue-500 hover:text-blue-700"
+                onClick={() => handlePageChange(paginationInfo.currentPage + 1)}
+              >
+                <FaChevronRight />
+              </button>
+            )}
           </div>
         )}
       </div>

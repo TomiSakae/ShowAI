@@ -11,6 +11,16 @@ interface AIWebsite {
     link: string;
 }
 
+interface ApiResponse {
+    data: AIWebsite[];
+    pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+    };
+}
+
 function SearchContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -47,8 +57,8 @@ function SearchContent() {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const data = await response.json();
-            setAiWebsites(data);
+            const apiResponse: ApiResponse = await response.json();
+            setAiWebsites(apiResponse.data);
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('Failed to fetch data');

@@ -5,6 +5,7 @@ import { FaSpinner, FaSearch } from 'react-icons/fa';
 import Link from 'next/link';
 
 interface AIWebsite {
+    _id: string;
     id: string;
     name: string;
     description: string[];
@@ -38,8 +39,8 @@ function ShowContent() {
             }
             const data = await response.json();
             console.log('Received data:', data);
-            if (Array.isArray(data) && data.length > 0) {
-                setWebsite(data[0]);
+            if (data && data.data && data.data.length > 0) {
+                setWebsite(data.data[0]);
             } else {
                 setError('Không tìm thấy dữ liệu website');
             }
