@@ -1,8 +1,10 @@
 'use client'
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { FaSpinner, FaSearch, FaStar, FaTimes } from 'react-icons/fa';
+import { FaSpinner, FaStar, FaTimes } from 'react-icons/fa';
 import Link from 'next/link';
+import WebsiteList from '@/components/WebsiteList';
+import SearchBar from '@/components/SearchBar';
 
 interface AIWebsite {
     _id: string;
@@ -20,7 +22,6 @@ function ShowContent() {
     const [website, setWebsite] = useState<AIWebsite | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
     const [randomWebsites, setRandomWebsites] = useState<AIWebsite[]>([]);
     const [isRandomLoading, setIsRandomLoading] = useState(false);
     const [isStarred, setIsStarred] = useState(false);
@@ -115,12 +116,6 @@ function ShowContent() {
         }
     };
 
-    const handleInputSearch = () => {
-        if (searchTerm.trim()) {
-            router.push(`/search?q=${encodeURIComponent(searchTerm)}`);
-        }
-    };
-
     const handleTagClick = (tag: string) => {
         router.push(`/search?tag=${encodeURIComponent(tag)}`);
     };
@@ -153,24 +148,7 @@ function ShowContent() {
         <div className="bg-[#0F172A] text-white min-h-screen">
             <div className="bg-[#2A3284] text-center py-4 mb-4 px-4">
                 <div className="py-4 sm:py-8">
-                    <div className="flex justify-center items-center">
-                        <div className="relative flex w-full max-w-md">
-                            <input
-                                type="text"
-                                placeholder="Tìm kiếm công cụ AI..."
-                                className="py-2 px-4 rounded-full w-full text-black"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleInputSearch()}
-                            />
-                            <button
-                                className="bg-white text-black rounded-full px-4 py-2 ml-2"
-                                onClick={handleInputSearch}
-                            >
-                                <FaSearch />
-                            </button>
-                        </div>
-                    </div>
+                    <SearchBar onTagClick={handleTagClick} />
                 </div>
             </div>
             <div className="container mx-auto px-4 py-8">
@@ -238,36 +216,7 @@ function ShowContent() {
                         ) : randomWebsites.length > 0 ? (
                             <div className="mt-8">
                                 <h3 className="text-xl text-center font-bold text-blue-300 mb-4">Đề xuất trang web AI ngẫu nhiên</h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {randomWebsites.map((site, index) => (
-                                        <div
-                                            key={index}
-                                            onClick={() => router.push(`/show?id=${site.id}`)}
-                                            className="border border-gray-700 rounded-lg p-4 hover:shadow-lg hover:shadow-blue-500/50 transition-shadow h-full flex flex-col bg-gray-800 cursor-pointer"
-                                        >
-                                            <h2 className="text-xl font-semibold mb-2 text-blue-300">{site.name}</h2>
-                                            <div className="text-gray-300 mb-4 flex-grow overflow-hidden">
-                                                <p className="line-clamp-3">
-                                                    {Array.isArray(site.description) ? site.description[0] : site.description}
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-wrap gap-2">
-                                                {site.tags && site.tags.map((tag, tagIndex) => (
-                                                    <span
-                                                        key={tagIndex}
-                                                        className="bg-blue-900 text-blue-200 text-xs font-medium px-2.5 py-0.5 rounded cursor-pointer hover:bg-blue-800 transition-colors duration-300"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleTagClick(tag);
-                                                        }}
-                                                    >
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                <WebsiteList websites={randomWebsites} onTagClick={handleTagClick} />
                             </div>
                         ) : (
                             <p className="text-center mt-8">Không có đề xuất nào để hiển thị.</p>
@@ -290,35 +239,7 @@ function ShowContent() {
                                             <FaSpinner className="inline-block animate-spin mr-2" /> Đang tải...
                                         </div>
                                     ) : starredWebsites.length > 0 ? (
-                                        starredWebsites.map((site, index) => (
-                                            <div
-                                                key={index}
-                                                onClick={() => {
-                                                    router.push(`/show?id=${site.id}`);
-                                                    toggleStarredModal();
-                                                }}
-                                                className="border border-gray-700 rounded-lg p-4 hover:shadow-lg hover:shadow-blue-500/50 transition-shadow bg-gray-800 cursor-pointer mb-4"
-                                            >
-                                                <h3 className="text-lg font-semibold mb-2 text-blue-300">{site.name}</h3>
-                                                <p className="text-gray-300 text-sm line-clamp-2 mb-2">
-                                                    {Array.isArray(site.description) ? site.description[0] : site.description}
-                                                </p>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {site.tags && site.tags.map((tag, tagIndex) => (
-                                                        <span
-                                                            key={tagIndex}
-                                                            className="bg-blue-900 text-blue-200 text-xs font-medium px-2.5 py-0.5 rounded cursor-pointer hover:bg-blue-800 transition-colors duration-300"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleTagClick(tag);
-                                                            }}
-                                                        >
-                                                            {tag}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))
+                                        <WebsiteList websites={starredWebsites} onTagClick={handleTagClick} isSidebar={true} />
                                     ) : (
                                         <p className="text-center">Không có trang nổi bật nào.</p>
                                     )}
@@ -337,32 +258,7 @@ function ShowContent() {
                                         <FaSpinner className="inline-block animate-spin mr-2" /> Đang tải...
                                     </div>
                                 ) : starredWebsites.length > 0 ? (
-                                    starredWebsites.map((site, index) => (
-                                        <div
-                                            key={index}
-                                            onClick={() => router.push(`/show?id=${site.id}`)}
-                                            className="border border-gray-700 rounded-lg p-4 hover:shadow-lg hover:shadow-blue-500/50 transition-shadow bg-gray-800 cursor-pointer mb-4"
-                                        >
-                                            <h3 className="text-lg font-semibold mb-2 text-blue-300">{site.name}</h3>
-                                            <p className="text-gray-300 text-sm line-clamp-2 mb-2">
-                                                {Array.isArray(site.description) ? site.description[0] : site.description}
-                                            </p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {site.tags && site.tags.map((tag, tagIndex) => (
-                                                    <span
-                                                        key={tagIndex}
-                                                        className="bg-blue-900 text-blue-200 text-xs font-medium px-2.5 py-0.5 rounded cursor-pointer hover:bg-blue-800 transition-colors duration-300"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleTagClick(tag);
-                                                        }}
-                                                    >
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))
+                                    <WebsiteList websites={starredWebsites} onTagClick={handleTagClick} isSidebar={true} />
                                 ) : (
                                     <p className="text-center">Không có trang nổi bật nào.</p>
                                 )}
