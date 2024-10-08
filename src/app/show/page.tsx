@@ -94,6 +94,11 @@ function ShowContent() {
     const fetchStarredWebsites = async () => {
         setIsStarredLoading(true);
         const starredIds = JSON.parse(localStorage.getItem('starredIds') || '[]');
+        if (starredIds.length === 0) {
+            setStarredWebsites([]);
+            setIsStarredLoading(false);
+            return;
+        }
         try {
             const starIdsQuery = starredIds.join(',');
             const response = await fetch(`https://vercel-api-five-nu.vercel.app/api/showai?star=${starIdsQuery}`);
