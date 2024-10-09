@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 import "./globals.css";
 import NavFooter from "@/components/NavFooter";
 
@@ -30,6 +31,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NavFooter>{children}</NavFooter>
+        <Script
+          src="/live2d/core/live2dcubismcore.min.js"
+          strategy="beforeInteractive"
+        />
+        <Script
+          src="/live2d/core/live2d.min.js"
+          strategy="beforeInteractive"
+        />
       </body>
     </html>
   );

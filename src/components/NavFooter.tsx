@@ -7,6 +7,7 @@ import { FaFacebook, FaGithub } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
 import GeminiChat from './GeminiChat';
 import AIDesignModal from './AIDesignModal';
+import Live2DModelComponent from './Live2DModelComponent';
 
 const NavBar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,6 +15,7 @@ const NavBar = () => {
     const [clearTrigger, setClearTrigger] = useState(0);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isAIDesignModalOpen, setIsAIDesignModalOpen] = useState(false);
+    const [isLive2DModalOpen, setIsLive2DModalOpen] = useState(false);
     const [navStyles, setNavStyles] = useState({
         bgColor: 'bg-[#3E52E8]',
         textColor: 'text-white',
@@ -26,6 +28,11 @@ const NavBar = () => {
             setNavStyles(JSON.parse(storedNavStyles));
         } else {
             localStorage.setItem('navStyles', JSON.stringify(navStyles));
+        }
+
+        const storedLive2DState = localStorage.getItem('isLive2DModalOpen');
+        if (storedLive2DState) {
+            setIsLive2DModalOpen(JSON.parse(storedLive2DState));
         }
 
         const handleResize = () => {
@@ -52,11 +59,28 @@ const NavBar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
+    const toggleLive2DModal = () => {
+        const newState = !isLive2DModalOpen;
+        setIsLive2DModalOpen(newState);
+        localStorage.setItem('isLive2DModalOpen', JSON.stringify(newState));
+        if (newState) {
+            window.location.reload();
+        }
+    };
+
     return (
         <nav className={`${navStyles.bgColor} ${navStyles.textColor} ${navStyles.padding}`}>
             <div className="container md:mx-4 flex justify-between items-center">
                 <Link href="/" className="text-3xl font-bold">
-                    <Image src="https://tomisakae.github.io/ShowAI/logo.jpg" alt="ShowAI Logo" className='rounded-full' width={60} height={60} />
+                    <Image
+                        src="https://tomisakae.github.io/ShowAI/logo.jpg"
+                        alt="ShowAI Logo"
+                        className='rounded-full'
+                        width={60}
+                        height={60}
+                        onMouseEnter={() => window.dispatchEvent(new CustomEvent('logoHover', { detail: 'Đây là logo của ShowAI, một nền tảng giúp bạn khám phá và tìm kiếm các công cụ AI hữu ích.' }))}
+                        onMouseLeave={() => window.dispatchEvent(new CustomEvent('logoLeave'))}
+                    />
                 </Link>
                 <div className="md:hidden">
                     <button onClick={toggleSidebar} className="text-white">
@@ -92,6 +116,12 @@ const NavBar = () => {
                             className="bg-white text-[#3E52E8] px-4 py-2 rounded mx-2 hover:bg-[#93C5FD] hover:text-white transition-colors duration-300 w-full md:w-auto"
                         >
                             AI Hỗ Trợ
+                        </button>
+                        <button
+                            onClick={toggleLive2DModal}
+                            className="hidden md:block bg-white text-[#3E52E8] px-4 py-2 rounded mx-2 hover:bg-[#93C5FD] hover:text-white transition-colors duration-300"
+                        >
+                            {isLive2DModalOpen ? 'Tắt Live Hướng Dẫn' : 'Bật Live Hướng Dẫn'}
                         </button>
                     </div>
                 </div>
@@ -130,6 +160,9 @@ const NavBar = () => {
             )}
             {isAIDesignModalOpen && (
                 <AIDesignModal onClose={() => setIsAIDesignModalOpen(false)} />
+            )}
+            {isLive2DModalOpen && (
+                <Live2DModelComponent />
             )}
         </nav>
     );
