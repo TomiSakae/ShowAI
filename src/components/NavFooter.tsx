@@ -5,7 +5,7 @@ const NavBar = () => (
     <nav className="bg-[#3E52E8] text-white p-4">
         <div className="container md:mx-4 flex justify-between items-center">
             <Link href="/" className="text-3xl font-bold">
-                <Image src="/logo.jpg" alt="ShowAI Logo" className='rounded-full' width={60} height={60} />
+                <Image src="https://tomisakae.github.io/ShowAI/logo.jpg" alt="ShowAI Logo" className='rounded-full' width={60} height={60} />
             </Link>
         </div>
     </nav>
