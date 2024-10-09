@@ -34,6 +34,7 @@ const GeminiChat: React.FC = () => {
     const [isLoadingAIWebsites, setIsLoadingAIWebsites] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const typewriterRef = useRef<NodeJS.Timeout | null>(null);
+    const [isFirstMessage, setIsFirstMessage] = useState(true);
 
     const sampleQuestions = [
         "Bạn có thể giới thiệu về một công cụ AI tạo hình ảnh không?",
@@ -69,6 +70,7 @@ const GeminiChat: React.FC = () => {
                 const parsedMessages = JSON.parse(savedMessages);
                 if (Array.isArray(parsedMessages)) {
                     setMessages(parsedMessages);
+                    setIsFirstMessage(false);
                 } else {
                     console.error('Saved messages is not an array:', parsedMessages);
                     sessionStorage.removeItem('chatMessages');
@@ -118,7 +120,14 @@ const GeminiChat: React.FC = () => {
 
         setIsLoading(true);
         const newMessage = { text: input, isUser: true };
-        setMessages(prevMessages => [...prevMessages, newMessage]);
+
+        if (isFirstMessage) {
+            setMessages([newMessage]);
+            setIsFirstMessage(false);
+        } else {
+            setMessages(prevMessages => [...prevMessages, newMessage]);
+        }
+
         setInput('');
 
         const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "AIzaSyB_eNpMTroPTupXzl_oey08M0d-luxJ3OE";
