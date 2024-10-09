@@ -36,25 +36,25 @@ const NavBar = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className={`bg-[#0F172A] rounded-lg p-6 flex flex-col border border-[#3E52E8] transition-all duration-300 ${isExpanded ? 'w-[98%] h-[98%]' : 'w-full max-w-2xl h-3/4'}`}>
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-2xl font-bold text-[#93C5FD]">Trò chuyện cùng AI</h2>
+                            <h2 className="text-xl md:text-2xl font-bold text-[#93C5FD]">Trò chuyện cùng AI</h2>
                             <div className="flex items-center">
                                 <button
                                     onClick={handleClearMessages}
-                                    className="text-gray-400 hover:text-white transition-colors duration-300 mr-3"
+                                    className="text-gray-400 hover:text-white transition-colors duration-300 mr-4"
                                 >
-                                    <IoTrash className="h-6 w-6" />
+                                    <IoTrash className="h-5 w-5 md:h-6 md:w-6" />
                                 </button>
                                 <button
                                     onClick={toggleExpand}
-                                    className="text-gray-400 hover:text-white transition-colors duration-300 mr-3"
+                                    className="text-gray-400 hover:text-white transition-colors duration-300 mr-4"
                                 >
-                                    {isExpanded ? <IoContract className="h-6 w-6" /> : <IoExpand className="h-6 w-6" />}
+                                    {isExpanded ? <IoContract className="h-5 w-5 md:h-6 md:w-6" /> : <IoExpand className="h-5 w-5 md:h-6 md:w-6" />}
                                 </button>
                                 <button
                                     onClick={() => setIsModalOpen(false)}
                                     className="text-gray-400 hover:text-white transition-colors duration-300"
                                 >
-                                    <IoClose className="h-6 w-6" />
+                                    <IoClose className="h-6 w-6 md:h-7 md:w-7" />
                                 </button>
                             </div>
                         </div>
