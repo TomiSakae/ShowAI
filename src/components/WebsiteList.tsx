@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 interface AIWebsite {
     _id: string;
@@ -19,9 +20,32 @@ interface WebsiteListProps {
 
 const WebsiteList: React.FC<WebsiteListProps> = ({ websites, onTagClick, isSidebar = false }) => {
     const router = useRouter();
+    const [hoveredWebsite, setHoveredWebsite] = useState<string | null>(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const handleWebsiteClick = (id: string) => {
         router.push(`/show?id=${id}`);
+    };
+
+    const handleMouseEnter = (id: string) => {
+        if (!isSidebar && !isMobile) {
+            setHoveredWebsite(id);
+        }
+    };
+
+    const handleMouseLeave = () => {
+        if (!isSidebar && !isMobile) {
+            setHoveredWebsite(null);
+        }
     };
 
     return (
@@ -30,11 +54,24 @@ const WebsiteList: React.FC<WebsiteListProps> = ({ websites, onTagClick, isSideb
                 <div
                     key={index}
                     onClick={() => handleWebsiteClick(website.id)}
-                    className={`border border-gray-700 rounded-lg p-4 hover:shadow-lg hover:shadow-blue-500/50 transition-shadow flex flex-col bg-gray-800 cursor-pointer ${isSidebar ? 'h-auto' : 'h-full'}`}
+                    onMouseEnter={() => handleMouseEnter(website.id)}
+                    onMouseLeave={handleMouseLeave}
+                    className={`border border-gray-700 rounded-lg p-5 hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 flex flex-col bg-gray-800 cursor-pointer ${isSidebar ? 'h-auto' : 'h-full'} ${!isSidebar && !isMobile && hoveredWebsite === website.id ? 'scale-105 z-10' : ''}`}
                 >
-                    <h2 className={`font-semibold mb-2 text-blue-300 ${isSidebar ? 'text-lg' : 'text-xl'}`}>{website.name}</h2>
+                    <div className="flex justify-between items-start mb-2">
+                        <h2 className={`font-semibold text-blue-300 ${isSidebar ? 'text-lg' : 'text-xl'}`}>{website.name}</h2>
+                        <a
+                            href={website.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className={`text-blue-300 hover:text-blue-500 ${isMobile || isSidebar || (!isSidebar && !isMobile && hoveredWebsite === website.id) ? 'block' : 'hidden'}`}
+                        >
+                            <FaExternalLinkAlt />
+                        </a>
+                    </div>
                     <div className="text-gray-300 mb-4 flex-grow overflow-hidden">
-                        <p className={isSidebar ? "line-clamp-2" : "line-clamp-3"}>
+                        <p className={!isSidebar && !isMobile && hoveredWebsite === website.id ? "" : (isSidebar ? "line-clamp-3" : "line-clamp-4")}>
                             {Array.isArray(website.description) ? website.description[0] : website.description}
                         </p>
                     </div>
