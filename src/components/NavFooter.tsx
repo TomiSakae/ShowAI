@@ -2,15 +2,21 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { IoClose, IoExpand, IoContract } from 'react-icons/io5';
+import { IoClose, IoExpand, IoContract, IoTrash } from 'react-icons/io5';
 import GeminiChat from './GeminiChat';
 
 const NavBar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [clearTrigger, setClearTrigger] = useState(0);
 
     const toggleExpand = () => {
         setIsExpanded(!isExpanded);
+    };
+
+    const handleClearMessages = () => {
+        sessionStorage.removeItem('chatMessages');
+        setClearTrigger(prev => prev + 1);
     };
 
     return (
@@ -33,8 +39,14 @@ const NavBar = () => {
                             <h2 className="text-2xl font-bold text-[#93C5FD]">Trò chuyện cùng AI</h2>
                             <div className="flex items-center">
                                 <button
+                                    onClick={handleClearMessages}
+                                    className="text-gray-400 hover:text-white transition-colors duration-300 mr-3"
+                                >
+                                    <IoTrash className="h-6 w-6" />
+                                </button>
+                                <button
                                     onClick={toggleExpand}
-                                    className="text-gray-400 hover:text-white transition-colors duration-300 mr-2"
+                                    className="text-gray-400 hover:text-white transition-colors duration-300 mr-3"
                                 >
                                     {isExpanded ? <IoContract className="h-6 w-6" /> : <IoExpand className="h-6 w-6" />}
                                 </button>
@@ -47,7 +59,7 @@ const NavBar = () => {
                             </div>
                         </div>
                         <div className="flex-grow overflow-hidden">
-                            <GeminiChat />
+                            <GeminiChat key={clearTrigger} />
                         </div>
                     </div>
                 </div>
