@@ -23,6 +23,7 @@ interface ApiResponse {
         totalItems: number;
         itemsPerPage: number;
     };
+    tags: string[];
 }
 
 function SearchContent() {
@@ -34,6 +35,7 @@ function SearchContent() {
     const [searchTerm, setSearchTerm] = useState('');
     const [displayTerm, setDisplayTerm] = useState('');
     const [isTagSearch, setIsTagSearch] = useState(false);
+    const [allTags, setAllTags] = useState<string[]>([]);
 
     useEffect(() => {
         const query = searchParams.get('q');
@@ -63,6 +65,7 @@ function SearchContent() {
             }
             const apiResponse: ApiResponse = await response.json();
             setAiWebsites(apiResponse.data);
+            setAllTags(apiResponse.tags);
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('Failed to fetch data');
@@ -80,7 +83,7 @@ function SearchContent() {
         <div className="bg-[#0F172A] text-white min-h-screen">
             <div className="bg-[#2A3284] text-center py-8 mb-8 px-4">
                 <div className="py-4 sm:py-8">
-                    <SearchBar onTagClick={handleTagClick} />
+                    <SearchBar onTagClick={handleTagClick} allTags={allTags} />
                     <p className="mt-4 text-base sm:text-lg font-bold">
                         {isTagSearch ? `Kết quả của tag: ${displayTerm}` : `Kết quả của: ${displayTerm}`}
                     </p>

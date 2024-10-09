@@ -29,6 +29,7 @@ function ShowContent() {
     const [isStarredLoading, setIsStarredLoading] = useState(true);
     const [showStarredModal, setShowStarredModal] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [allTags, setAllTags] = useState<string[]>([]);
 
     useEffect(() => {
         const id = searchParams.get('id');
@@ -63,6 +64,7 @@ function ShowContent() {
             console.log('Received data:', data);
             if (data && data.data && data.data.length > 0) {
                 setWebsite(data.data[0]);
+                setAllTags(data.tags);
             } else {
                 setError('Không tìm thấy dữ liệu website');
             }
@@ -84,6 +86,7 @@ function ShowContent() {
             const data = await response.json();
             if (data && data.data) {
                 setRandomWebsites(data.data);
+                setAllTags(data.tags);
             }
         } catch (error) {
             console.error('Error fetching random websites:', error);
@@ -107,6 +110,7 @@ function ShowContent() {
                 const data = await response.json();
                 if (data && data.data) {
                     setStarredWebsites(data.data);
+                    setAllTags(data.tags);
                 }
             }
         } catch (error) {
@@ -148,7 +152,7 @@ function ShowContent() {
         <div className="bg-[#0F172A] text-white min-h-screen">
             <div className="bg-[#2A3284] text-center py-4 mb-4 px-4">
                 <div className="py-4 sm:py-8">
-                    <SearchBar onTagClick={handleTagClick} />
+                    <SearchBar onTagClick={handleTagClick} allTags={allTags} />
                 </div>
             </div>
             <div className="container mx-auto px-4 py-8">
