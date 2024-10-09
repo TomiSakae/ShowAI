@@ -42,7 +42,7 @@ const Live2DModelComponent = () => {
 
         const loadLive2DModel = async () => {
             const { Live2DModel, MotionPreloadStrategy } = await import('pixi-live2d-display');
-            const model = await Live2DModel.from(window.localStorage.getItem('model') || '/live2d/models/abeikelongbi_3_hx/abeikelongbi_3_hx.model3.json', { motionPreload: MotionPreloadStrategy.IDLE });
+            const model = await Live2DModel.from(window.localStorage.getItem('model') || 'https://tomisakae.github.io/ShowAI/live2d/models/abeikelongbi_3_hx/abeikelongbi_3_hx.model3.json', { motionPreload: MotionPreloadStrategy.IDLE });
             const pixiModel = model as unknown as PIXI.Container;
             app.stage.addChild(pixiModel);
             pixiModel.position.set(100, 0);
@@ -109,11 +109,11 @@ const Live2DModelComponent = () => {
     return (
         <>
             <Script
-                src="/live2d/core/live2dcubismcore.min.js"
+                src="https://tomisakae.github.io/ShowAI/live2d/core/live2dcubismcore.min.js"
                 onLoad={() => setIsLive2DScriptLoaded(true)}
             />
             <Script
-                src="/live2d/core/live2d.min.js"
+                src="https://tomisakae.github.io/ShowAI/live2d/core/live2d.min.js"
                 onLoad={() => setIsLive2DScriptLoaded(true)}
             />
             <canvas id="canvas" />

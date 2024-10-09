@@ -32,11 +32,11 @@ export default function RootLayout({
       >
         <NavFooter>{children}</NavFooter>
         <Script
-          src="/live2d/core/live2dcubismcore.min.js"
+          src="https://tomisakae.github.io/ShowAI/live2d/core/live2dcubismcore.min.js"
           strategy="beforeInteractive"
         />
         <Script
-          src="/live2d/core/live2d.min.js"
+          src="https://tomisakae.github.io/ShowAI/live2d/core/live2d.min.js"
           strategy="beforeInteractive"
         />
       </body>
