@@ -80,7 +80,7 @@ const GeminiChat: React.FC = () => {
         setMessages(prevMessages => [...prevMessages, newMessage]);
         setInput('');
 
-        const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+        const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "AIzaSyB_eNpMTroPTupXzl_oey08M0d-luxJ3OE";
         const genAI = new GoogleGenerativeAI(apiKey);
 
         const model = genAI.getGenerativeModel({
