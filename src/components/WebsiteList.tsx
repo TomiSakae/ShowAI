@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaExternalLinkAlt } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 interface AIWebsite {
     _id: string;
@@ -48,11 +49,38 @@ const WebsiteList: React.FC<WebsiteListProps> = ({ websites, onTagClick, isSideb
         }
     };
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.5
+            }
+        }
+    };
+
     return (
-        <div className={isSidebar ? "flex flex-col gap-4 mb-4" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"}>
+        <motion.div
+            className={isSidebar ? "flex flex-col gap-4 mb-4" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
             {websites.map((website, index) => (
-                <div
+                <motion.div
                     key={index}
+                    variants={itemVariants}
                     onClick={() => handleWebsiteClick(website.id)}
                     onMouseEnter={() => handleMouseEnter(website.id)}
                     onMouseLeave={handleMouseLeave}
@@ -89,9 +117,9 @@ const WebsiteList: React.FC<WebsiteListProps> = ({ websites, onTagClick, isSideb
                             </span>
                         ))}
                     </div>
-                </div>
+                </motion.div>
             ))}
-        </div>
+        </motion.div>
     );
 };
 
