@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.modal {
+    position: fixed;
+    z-index: 50;
+    /* Các thuộc tính CSS khác */
+}

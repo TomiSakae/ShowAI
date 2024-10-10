@@ -5,6 +5,7 @@ import { FaSpinner, FaStar, FaTimes } from 'react-icons/fa';
 import Link from 'next/link';
 import WebsiteList from '@/components/WebsiteList';
 import SearchBar from '@/components/SearchBar';
+import ModalPortal from '@/components/ModalPortal';
 
 interface AIWebsite {
     _id: string;
@@ -229,27 +230,29 @@ function ShowContent() {
 
                     {/* Starred Websites Modal (only for mobile) */}
                     {isMobile && showStarredModal && (
-                        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
-                            <div className="bg-gray-800 w-full max-w-md h-full overflow-y-auto">
-                                <div className="p-4">
-                                    <div className="flex justify-between items-center mb-4">
-                                        <h2 className="text-xl font-bold text-blue-300">Danh sách các trang nổi bật</h2>
-                                        <button onClick={toggleStarredModal} className="text-white">
-                                            <FaTimes />
-                                        </button>
-                                    </div>
-                                    {isStarredLoading ? (
-                                        <div>
-                                            <FaSpinner className="inline-block animate-spin mr-2" /> Đang tải...
+                        <ModalPortal>
+                            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
+                                <div className="bg-gray-800 w-full max-w-md h-full overflow-y-auto">
+                                    <div className="p-4">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <h2 className="text-xl font-bold text-blue-300">Danh sách các trang nổi bật</h2>
+                                            <button onClick={toggleStarredModal} className="text-white">
+                                                <FaTimes />
+                                            </button>
                                         </div>
-                                    ) : starredWebsites.length > 0 ? (
-                                        <WebsiteList websites={starredWebsites} onTagClick={handleTagClick} isSidebar={true} />
-                                    ) : (
-                                        <p className="text-center">Không có trang nổi bật nào.</p>
-                                    )}
+                                        {isStarredLoading ? (
+                                            <div>
+                                                <FaSpinner className="inline-block animate-spin mr-2" /> Đang tải...
+                                            </div>
+                                        ) : starredWebsites.length > 0 ? (
+                                            <WebsiteList websites={starredWebsites} onTagClick={handleTagClick} isSidebar={true} />
+                                        ) : (
+                                            <p className="text-center text-white">Không có trang nổi bật nào.</p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </ModalPortal>
                     )}
 
                     {/* Starred Websites (for desktop) */}
@@ -264,7 +267,7 @@ function ShowContent() {
                                 ) : starredWebsites.length > 0 ? (
                                     <WebsiteList websites={starredWebsites} onTagClick={handleTagClick} isSidebar={true} />
                                 ) : (
-                                    <p className="text-center">Không có trang nổi bật nào.</p>
+                                    <p className="text-center text-white">Không có trang nổi bật nào.</p>
                                 )}
                             </div>
                         </div>
@@ -272,12 +275,14 @@ function ShowContent() {
                 </div>
             </div>
             {isMobile && (
-                <button
-                    className="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full"
-                    onClick={toggleStarredModal}
-                >
-                    <FaStar />
-                </button>
+                <ModalPortal>
+                    <button
+                        className="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full"
+                        onClick={toggleStarredModal}
+                    >
+                        <FaStar />
+                    </button>
+                </ModalPortal>
             )}
         </div>
     );

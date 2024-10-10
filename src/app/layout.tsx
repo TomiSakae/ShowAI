@@ -31,6 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NavFooter>{children}</NavFooter>
+        <div id="modal-root"></div>
         <Script
           src="https://tomisakae.id.vn/live2d/core/live2dcubismcore.min.js"
           strategy="beforeInteractive"
