@@ -3,15 +3,20 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { IoClose, IoMenu } from 'react-icons/io5';
+import { FaCircle, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import GeminiChat from './GeminiChat';
 import AIDesignModal from './AIDesignModal';
+import AICompareModal from './AICompareModal';
 import Live2DModelComponent from './Live2DModelComponent';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const NavBar = () => {
     const [isGeminiChatOpen, setIsGeminiChatOpen] = useState(false);
     const [isAIDesignModalOpen, setIsAIDesignModalOpen] = useState(false);
+    const [isAICompareModalOpen, setIsAICompareModalOpen] = useState(false);
     const [isLive2DModalOpen, setIsLive2DModalOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isAIToolsDropdownOpen, setIsAIToolsDropdownOpen] = useState(false);
     const [navStyles, setNavStyles] = useState({
         bgColor: 'bg-[#3E52E8]',
         textColor: 'text-white',
@@ -52,6 +57,14 @@ const NavBar = () => {
         localStorage.setItem('isLive2DModalOpen', JSON.stringify(newState));
     };
 
+    const toggleAIToolsDropdown = () => {
+        if (window.innerWidth >= 768) {
+            setIsAIToolsDropdownOpen(true);
+        } else {
+            setIsAIToolsDropdownOpen(!isAIToolsDropdownOpen);
+        }
+    };
+
     return (
         <nav className={`${navStyles.bgColor} ${navStyles.textColor} ${navStyles.padding}`}>
             <div className="container md:mx-4 flex justify-between items-center">
@@ -83,35 +96,91 @@ const NavBar = () => {
                                 <IoClose size={28} />
                             </button>
                         </div>
-                        <button
-                            onClick={() => {
-                                setIsAIDesignModalOpen(true);
-                                setIsSidebarOpen(false);
-                            }}
-                            className="bg-white text-[#3E52E8] px-4 py-2 rounded mx-2 hover:bg-[#93C5FD] hover:text-white transition-colors duration-300 w-full md:w-auto mb-2 md:mb-0"
-                        >
-                            AI Giao Diện
-                        </button>
-                        <button
-                            onClick={() => {
-                                setIsGeminiChatOpen(true);
-                                setIsSidebarOpen(false);
-                            }}
-                            className="bg-white text-[#3E52E8] px-4 py-2 rounded mx-2 hover:bg-[#93C5FD] hover:text-white transition-colors duration-300 w-full md:w-auto"
-                        >
-                            AI Hỗ Trợ
-                        </button>
-                        <button
+                        <div className="relative group">
+                            <button
+                                onClick={toggleAIToolsDropdown}
+                                onMouseEnter={() => window.innerWidth >= 768 && setIsAIToolsDropdownOpen(true)}
+                                onMouseLeave={() => window.innerWidth >= 768 && setIsAIToolsDropdownOpen(false)}
+                                className="text-white px-4 py-2 rounded mx-2 bg-[#1E293B] hover:bg-[#2D3748] transition-colors duration-300 w-full md:w-auto mb-0 flex items-center justify-between"
+                            >
+                                Công Cụ AI
+                                {isAIToolsDropdownOpen ? <FaChevronUp className="ml-2" /> : <FaChevronDown className="ml-2" />}
+                            </button>
+                            <AnimatePresence>
+                                {isAIToolsDropdownOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="absolute top-full left-0 w-full ml-2 md:ml-0 bg-[#1E293B] rounded-md shadow-lg z-10"
+                                        onMouseEnter={() => window.innerWidth >= 768 && setIsAIToolsDropdownOpen(true)}
+                                        onMouseLeave={() => window.innerWidth >= 768 && setIsAIToolsDropdownOpen(false)}
+                                    >
+                                        <button
+                                            onClick={() => {
+                                                setIsAIDesignModalOpen(true);
+                                                setIsSidebarOpen(false);
+                                                setIsAIToolsDropdownOpen(false);
+                                            }}
+                                            className="block w-full text-left px-4 py-2 text-white hover:bg-[#2D3748] transition-colors duration-300"
+                                        >
+                                            AI Giao Diện
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setIsGeminiChatOpen(true);
+                                                setIsSidebarOpen(false);
+                                                setIsAIToolsDropdownOpen(false);
+                                            }}
+                                            className="block w-full text-left px-4 py-2 text-white hover:bg-[#2D3748] transition-colors duration-300"
+                                        >
+                                            AI Hỗ Trợ
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setIsAICompareModalOpen(true);
+                                                setIsSidebarOpen(false);
+                                                setIsAIToolsDropdownOpen(false);
+                                            }}
+                                            className="block w-full text-left px-4 py-2 text-white hover:bg-[#2D3748] transition-colors duration-300"
+                                        >
+                                            AI So Sánh
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                        <motion.button
                             onClick={toggleLive2DModal}
-                            className="hidden md:block bg-white text-[#3E52E8] px-4 py-2 rounded mx-2 hover:bg-[#93C5FD] hover:text-white transition-colors duration-300"
+                            className={`hidden md:flex items-center bg-[#1E293B] text-[#93C5FD] px-4 py-2 rounded mx-2 hover:bg-[#2D3748] hover:text-white transition-colors duration-300 ${isLive2DModalOpen ? 'box-live' : ''
+                                }`}
                         >
-                            {isLive2DModalOpen ? 'Tắt Live Hướng Dẫn' : 'Bật Live Hướng Dẫn'}
-                        </button>
+                            <FaCircle className={`mr-2 ${isLive2DModalOpen ? 'text-green-500' : 'text-[#93C5FD]'}`} size={12} />
+                            {['L', 'i', 'v', 'e'].map((char, index) => (
+                                <motion.span
+                                    key={index}
+                                    initial={{ y: 0 }}
+                                    animate={isLive2DModalOpen ? { y: [-5, 0], color: ['#93C5FD', '#FFFFFF'] } : {}}
+                                    transition={{
+                                        repeat: isLive2DModalOpen ? Infinity : 0,
+                                        repeatType: "reverse",
+                                        duration: 0.5,
+                                        delay: index * 0.1
+                                    }}
+                                >
+                                    {char}
+                                </motion.span>
+                            ))}
+                        </motion.button>
                     </div>
                 </div>
             </div>
             {isAIDesignModalOpen && (
                 <AIDesignModal isOpen={isAIDesignModalOpen} onClose={() => setIsAIDesignModalOpen(false)} />
+            )}
+            {isAICompareModalOpen && (
+                <AICompareModal isOpen={isAICompareModalOpen} onClose={() => setIsAICompareModalOpen(false)} />
             )}
             {isLive2DModalOpen && (
                 <Live2DModelComponent />
