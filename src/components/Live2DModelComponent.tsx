@@ -42,15 +42,15 @@ const Live2DModelComponent = () => {
 
         const loadLive2DModel = async () => {
             const { Live2DModel, MotionPreloadStrategy } = await import('pixi-live2d-display');
-            const model = await Live2DModel.from(window.localStorage.getItem('model') || 'https://tomisakae.id.vn/live2d/models/abeikelongbi_3_hx/abeikelongbi_3_hx.model3.json', { motionPreload: MotionPreloadStrategy.IDLE });
+            const model = await Live2DModel.from(window.localStorage.getItem('model') || 'https://tomisakae.id.vn/live2d/models/bulaimodun_2/bulaimodun_2.model3.json', { motionPreload: MotionPreloadStrategy.IDLE });
             const pixiModel = model as unknown as PIXI.Container;
             app.stage.addChild(pixiModel);
-            pixiModel.position.set(100, 0);
-            pixiModel.scale.set(0.1);
+            pixiModel.position.set(0, 0);
+            pixiModel.scale.set(0.2);
             pixiModel.interactive = true;
             pixiModel.trackedPointers = {};
             setIsModelLoaded(true);
-            typeText('Hãy dí chuột vào các thành phần trên web và tôi sẽ hiện thông tin về chức năng của nó!');
+            typeText('Hãy dí chuột vào các thành phần trên web và mình sẽ nói cho bạn thông tin về chức năng của nó!');
         };
 
         if (isLive2DScriptLoaded) {
@@ -61,9 +61,9 @@ const Live2DModelComponent = () => {
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;
         if (canvas) {
             canvas.style.position = 'fixed';
-            canvas.style.right = '-15%';
+            canvas.style.right = '-14%';
             canvas.style.bottom = '0';
-            canvas.style.width = '30%';
+            canvas.style.width = '40%';
             canvas.style.height = 'auto';
             canvas.style.zIndex = '1000';
         }
@@ -74,7 +74,7 @@ const Live2DModelComponent = () => {
         };
 
         const handleLogoLeave = () => {
-            typeText('Hãy dí chuột vào các thành phần trên web và tôi sẽ hiện thông tin về chức năng của nó!');
+            typeText('Hãy dí chuột vào các thành phần trên web và mình sẽ nói cho bạn thông tin về chức năng của nó!');
         };
 
         window.addEventListener('logoHover', handleLogoHover as EventListener);
@@ -117,8 +117,14 @@ const Live2DModelComponent = () => {
                 onLoad={() => setIsLive2DScriptLoaded(true)}
             />
             <canvas id="canvas" />
+            {!isModelLoaded && (
+                <div className="fixed right-[1%] bottom-[2%] bg-white p-2.5 rounded-lg z-[1001] flex items-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mr-2"></div>
+                    <p className="text-sm text-gray-700">Đang tải mô hình...</p>
+                </div>
+            )}
             {isModelLoaded && (
-                <div className="fixed right-[1%] bottom-[31%] bg-white p-2.5 rounded-lg max-w-[200px] z-[1001]">
+                <div className="fixed right-[1%] bottom-[35%] bg-white p-2.5 rounded-lg max-w-[200px] z-[1001]">
                     <p className="m-0 text-lg text-black text-sm">
                         {chatMessage}
                         {isTyping && <span className="animate-pulse">|</span>}
