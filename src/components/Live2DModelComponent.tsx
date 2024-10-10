@@ -125,7 +125,8 @@ const Live2DModelComponent = () => {
             )}
             {isModelLoaded && (
                 <div className="fixed right-[1%] bottom-[35%] bg-white p-2.5 rounded-lg max-w-[200px] z-[1001]">
-                    <p className="m-0 text-lg text-black text-sm">
+                    <div className="absolute bottom-[-8px] right-[10px] w-0 h-0 border-l-[10px] border-l-transparent border-t-[10px] border-t-white border-r-[10px] border-r-transparent"></div>
+                    <p className="m-0 text-sm text-black">
                         {chatMessage}
                         {isTyping && <span className="animate-pulse">|</span>}
                     </p>
