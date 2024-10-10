@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { IoClose, IoExpand, IoContract, IoArrowUndo } from 'react-icons/io5';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface AIDesignModalProps {
     onClose: () => void;
+    isOpen: boolean;
 }
 
 interface StyleHistory {
@@ -11,7 +13,7 @@ interface StyleHistory {
     footer: Record<string, string | number>;
 }
 
-const AIDesignModal: React.FC<AIDesignModalProps> = ({ onClose }) => {
+const AIDesignModal: React.FC<AIDesignModalProps> = ({ onClose, isOpen }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [styleHistory, setStyleHistory] = useState<StyleHistory[]>([]);
@@ -101,46 +103,62 @@ Trả về dưới dạng JSON với 2 key là 'navStyles' và 'footerStyles', m
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className={`bg-[#0F172A] rounded-lg p-6 flex flex-col border border-[#3E52E8] transition-all duration-300 ${isExpanded ? 'w-[98%] h-[98%]' : 'w-full max-w-2xl h-3/4'}`}>
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl md:text-2xl font-bold text-[#93C5FD]">Tạo lại giao diện với AI</h2>
-                    <div className="flex items-center">
-                        <button
-                            onClick={toggleExpand}
-                            className="text-gray-400 hover:text-white transition-colors duration-300 mr-4"
-                        >
-                            {isExpanded ? <IoContract className="h-5 w-5 md:h-6 md:w-6" /> : <IoExpand className="h-5 w-5 md:h-6 md:w-6" />}
-                        </button>
-                        <button
-                            onClick={onClose}
-                            className="text-gray-400 hover:text-white transition-colors duration-300"
-                        >
-                            <IoClose className="h-6 w-6 md:h-7 md:w-7" />
-                        </button>
-                    </div>
-                </div>
-                <div className="flex-grow overflow-y-auto">
-                    <div className="space-y-4">
-                        <button
-                            className={`bg-[#3E52E8] text-white px-4 py-2 rounded w-full hover:bg-[#2A3BAF] transition-colors duration-300 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            onClick={generateRandomDesign}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? 'Đang tạo...' : 'Tạo Giao Diện Ngẫu Nhiên'}
-                        </button>
-                        <button
-                            className="bg-[#4A5568] text-white px-4 py-2 rounded w-full hover:bg-[#2D3748] transition-colors duration-300 flex items-center justify-center"
-                            onClick={revertToPreviousDesign}
-                            disabled={styleHistory.length === 0}
-                        >
-                            <IoArrowUndo className="mr-2" /> Quay Lại Giao Diện Cũ
-                        </button>
-                        {/* Thêm các tính năng khác ở đây */}
-                    </div>
-                </div>
-            </div>
-        </div>
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                >
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.9, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className={`bg-[#0F172A] rounded-lg p-6 flex flex-col border border-[#3E52E8] transition-all duration-300 ${isExpanded ? 'w-[98%] h-[98%]' : 'w-full max-w-2xl h-3/4'}`}
+                    >
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl md:text-2xl font-bold text-[#93C5FD]">Tạo lại giao diện với AI</h2>
+                            <div className="flex items-center">
+                                <button
+                                    onClick={toggleExpand}
+                                    className="text-gray-400 hover:text-white transition-colors duration-300 mr-4"
+                                >
+                                    {isExpanded ? <IoContract className="h-5 w-5 md:h-6 md:w-6" /> : <IoExpand className="h-5 w-5 md:h-6 md:w-6" />}
+                                </button>
+                                <button
+                                    onClick={onClose}
+                                    className="text-gray-400 hover:text-white transition-colors duration-300"
+                                >
+                                    <IoClose className="h-6 w-6 md:h-7 md:w-7" />
+                                </button>
+                            </div>
+                        </div>
+                        <div className="flex-grow overflow-y-auto">
+                            <div className="space-y-4">
+                                <button
+                                    className={`bg-[#3E52E8] text-white px-4 py-2 rounded w-full hover:bg-[#2A3BAF] transition-colors duration-300 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    onClick={generateRandomDesign}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? 'Đang tạo...' : 'Tạo Giao Diện Ngẫu Nhiên'}
+                                </button>
+                                <button
+                                    className="bg-[#4A5568] text-white px-4 py-2 rounded w-full hover:bg-[#2D3748] transition-colors duration-300 flex items-center justify-center"
+                                    onClick={revertToPreviousDesign}
+                                    disabled={styleHistory.length === 0}
+                                >
+                                    <IoArrowUndo className="mr-2" /> Quay Lại Giao Diện Cũ
+                                </button>
+                                {/* Thêm các tính năng khác ở đây */}
+                            </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 };
 

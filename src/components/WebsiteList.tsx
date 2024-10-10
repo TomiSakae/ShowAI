@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaExternalLinkAlt } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { gsap } from 'gsap';
 
 interface AIWebsite {
     _id: string;
@@ -23,6 +24,7 @@ const WebsiteList: React.FC<WebsiteListProps> = ({ websites, onTagClick, isSideb
     const router = useRouter();
     const [hoveredWebsite, setHoveredWebsite] = useState<string | null>(null);
     const [isMobile, setIsMobile] = useState(false);
+    const websiteRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     useEffect(() => {
         const checkMobile = () => {
@@ -37,15 +39,27 @@ const WebsiteList: React.FC<WebsiteListProps> = ({ websites, onTagClick, isSideb
         router.push(`/show?id=${id}`);
     };
 
-    const handleMouseEnter = (id: string) => {
+    const handleMouseEnter = (id: string, index: number) => {
         if (!isSidebar && !isMobile) {
             setHoveredWebsite(id);
+            gsap.to(websiteRefs.current[index], {
+                scale: 1.05,
+                boxShadow: '0 0 15px rgba(59, 130, 246, 0.5)',
+                duration: 0.3,
+                ease: 'power2.out'
+            });
         }
     };
 
-    const handleMouseLeave = () => {
+    const handleMouseLeave = (index: number) => {
         if (!isSidebar && !isMobile) {
             setHoveredWebsite(null);
+            gsap.to(websiteRefs.current[index], {
+                scale: 1,
+                boxShadow: 'none',
+                duration: 0.3,
+                ease: 'power2.out'
+            });
         }
     };
 
@@ -80,11 +94,14 @@ const WebsiteList: React.FC<WebsiteListProps> = ({ websites, onTagClick, isSideb
             {websites.map((website, index) => (
                 <motion.div
                     key={index}
+                    ref={(el: HTMLDivElement | null) => {
+                        if (el) websiteRefs.current[index] = el;
+                    }}
                     variants={itemVariants}
                     onClick={() => handleWebsiteClick(website.id)}
-                    onMouseEnter={() => handleMouseEnter(website.id)}
-                    onMouseLeave={handleMouseLeave}
-                    className={`border border-gray-700 rounded-lg p-5 hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 flex flex-col bg-gray-800 cursor-pointer ${isSidebar ? 'h-auto' : 'h-full'} ${!isSidebar && !isMobile && hoveredWebsite === website.id ? 'scale-105 z-10' : ''}`}
+                    onMouseEnter={() => handleMouseEnter(website.id, index)}
+                    onMouseLeave={() => handleMouseLeave(index)}
+                    className={`border border-gray-700 rounded-lg p-5 transition-all duration-300 flex flex-col bg-gray-800 cursor-pointer ${isSidebar ? 'h-auto' : 'h-full'}`}
                 >
                     <div className="flex justify-between items-start mb-2">
                         <h2 className={`font-semibold text-blue-300 ${isSidebar ? 'text-lg' : 'text-xl'}`}>{website.name}</h2>
@@ -98,11 +115,27 @@ const WebsiteList: React.FC<WebsiteListProps> = ({ websites, onTagClick, isSideb
                             <FaExternalLinkAlt />
                         </a>
                     </div>
-                    <div className="text-gray-300 mb-4 flex-grow overflow-hidden">
-                        <p className={!isSidebar && !isMobile && hoveredWebsite === website.id ? "" : (isSidebar ? "line-clamp-3" : "line-clamp-4")}>
-                            {Array.isArray(website.description) ? website.description[0] : website.description}
-                        </p>
-                    </div>
+                    <AnimatePresence>
+                        {!isSidebar && !isMobile && hoveredWebsite === website.id ? (
+                            <motion.div
+                                className="text-gray-300 mb-4 flex-grow overflow-hidden"
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <p>
+                                    {Array.isArray(website.description) ? website.description[0] : website.description}
+                                </p>
+                            </motion.div>
+                        ) : (
+                            <div className="text-gray-300 mb-4 flex-grow overflow-hidden">
+                                <p className={isSidebar ? "line-clamp-3" : "line-clamp-4"}>
+                                    {Array.isArray(website.description) ? website.description[0] : website.description}
+                                </p>
+                            </div>
+                        )}
+                    </AnimatePresence>
                     <div className="flex flex-wrap gap-2">
                         {website.tags.map((tag, tagIndex) => (
                             <span

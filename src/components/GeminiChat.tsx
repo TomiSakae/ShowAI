@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { IoSend, IoStop } from "react-icons/io5";
-import { FaSpinner } from "react-icons/fa";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import ChatInterface from './ChatInterface';
 
 interface Message {
     text: string;
@@ -24,7 +19,12 @@ interface AIWebsite {
     keyFeatures: string[];
 }
 
-const GeminiChat: React.FC = () => {
+interface GeminiChatProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+const GeminiChat: React.FC<GeminiChatProps> = ({ isOpen, onClose }) => {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +35,8 @@ const GeminiChat: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const typewriterRef = useRef<NodeJS.Timeout | null>(null);
     const [isFirstMessage, setIsFirstMessage] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [, setClearTrigger] = useState(0);
 
     const sampleQuestions = [
         "Bạn có thể giới thiệu về một công cụ AI tạo hình ảnh không?",
@@ -191,138 +193,35 @@ const GeminiChat: React.FC = () => {
         handleSubmit({ preventDefault: () => { } } as React.FormEvent);
     };
 
+    const toggleExpand = () => {
+        setIsExpanded(!isExpanded);
+    };
+
+    const handleClearMessages = () => {
+        sessionStorage.removeItem('chatMessages');
+        setClearTrigger(prev => prev + 1);
+        setMessages([]);
+    };
+
     return (
-        <div className="flex flex-col h-full">
-            <div className="flex-grow overflow-y-auto p-4 space-y-4">
-                {messages.map((message, index) => (
-                    <div key={index} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
-                        <div
-                            className={`max-w-3/4 p-3 rounded-lg ${message.isUser
-                                ? 'bg-blue-500 text-white'
-                                : message.isError
-                                    ? 'bg-red-500 text-white'
-                                    : message.isSampleQuestion
-                                        ? 'bg-green-500 text-white cursor-pointer'
-                                        : 'bg-gray-200 text-black'
-                                } max-w-[80%] break-words`}
-                            onClick={message.isSampleQuestion ? () => handleSampleQuestionClick(message.text) : undefined}
-                        >
-                            {message.isUser ? (
-                                <div>{message.text}</div>
-                            ) : (
-                                <ReactMarkdown
-                                    remarkPlugins={[remarkGfm]}
-                                    components={{
-                                        code({ inline, className, children, ...props }: {
-                                            inline?: boolean;
-                                            className?: string;
-                                            children?: React.ReactNode;
-                                        }) {
-                                            const match = /language-(\w+)/.exec(className || '')
-                                            return !inline && match ? (
-                                                <SyntaxHighlighter
-                                                    style={vscDarkPlus}
-                                                    language={match[1]}
-                                                    PreTag="div"
-                                                    {...props}
-                                                >
-                                                    {String(children).replace(/\n$/, '')}
-                                                </SyntaxHighlighter>
-                                            ) : (
-                                                <code className={className} {...props}>
-                                                    {children}
-                                                </code>
-                                            )
-                                        }
-                                    }}
-                                >
-                                    {message.text}
-                                </ReactMarkdown>
-                            )}
-                        </div>
-                    </div>
-                ))}
-                {typingText && (
-                    <div className="flex justify-start">
-                        <div className="max-w-3/4 p-3 rounded-lg bg-gray-200 text-black max-w-[80%] break-words">
-                            <ReactMarkdown
-                                remarkPlugins={[remarkGfm]}
-                                components={{
-                                    code({ inline, className, children, ...props }: {
-                                        inline?: boolean;
-                                        className?: string;
-                                        children?: React.ReactNode;
-                                    }) {
-                                        const match = /language-(\w+)/.exec(className || '')
-                                        return !inline && match ? (
-                                            <SyntaxHighlighter
-                                                style={vscDarkPlus}
-                                                language={match[1]}
-                                                PreTag="div"
-                                                {...props}
-                                            >
-                                                {String(children).replace(/\n$/, '')}
-                                            </SyntaxHighlighter>
-                                        ) : (
-                                            <code className={className} {...props}>
-                                                {children}
-                                            </code>
-                                        )
-                                    }
-                                }}
-                            >
-                                {typingText}
-                            </ReactMarkdown>
-                        </div>
-                    </div>
-                )}
-                {isLoading && !typingText && (
-                    <div className="flex justify-start">
-                        <div className="max-w-3/4 p-3 rounded-lg bg-gray-200 text-black max-w-[80%]">
-                            <span className="animate-pulse">...</span>
-                        </div>
-                    </div>
-                )}
-                <div ref={messagesEndRef} />
-            </div>
-            <form onSubmit={handleSubmit} className="p-4 border-t">
-                <div className="flex space-x-2">
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        className="flex-grow p-2 border rounded text-black"
-                        placeholder={isLoadingAIWebsites ? "Đang tải dữ liệu..." : "Nhập tin nhắn của bạn..."}
-                        disabled={isLoading || isTyping || isLoadingAIWebsites}
-                    />
-                    {isLoadingAIWebsites ? (
-                        <button
-                            type="button"
-                            className="bg-gray-500 text-white px-3 py-2 rounded"
-                            disabled
-                        >
-                            <FaSpinner className="animate-spin" />
-                        </button>
-                    ) : isTyping ? (
-                        <button
-                            type="button"
-                            className="bg-red-500 text-white px-3 py-2 rounded"
-                            onClick={stopTyping}
-                        >
-                            <IoStop />
-                        </button>
-                    ) : (
-                        <button
-                            type="submit"
-                            className="bg-blue-500 text-white px-3 py-2 rounded"
-                            disabled={isLoading || isTyping || isLoadingAIWebsites}
-                        >
-                            <IoSend />
-                        </button>
-                    )}
-                </div>
-            </form>
-        </div>
+        <ChatInterface
+            isOpen={isOpen}
+            onClose={onClose}
+            messages={messages}
+            typingText={typingText}
+            input={input}
+            setInput={setInput}
+            handleSubmit={handleSubmit}
+            isLoading={isLoading}
+            isTyping={isTyping}
+            isLoadingAIWebsites={isLoadingAIWebsites}
+            isExpanded={isExpanded}
+            toggleExpand={toggleExpand}
+            handleClearMessages={handleClearMessages}
+            stopTyping={stopTyping}
+            handleSampleQuestionClick={handleSampleQuestionClick}
+            messagesEndRef={messagesEndRef}
+        />
     );
 };
 
