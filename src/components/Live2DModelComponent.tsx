@@ -47,7 +47,7 @@ const Live2DModelComponent = () => {
 
         const loadLive2DModel = async () => {
             const { Live2DModel, MotionPreloadStrategy } = await import('pixi-live2d-display');
-            const model = await Live2DModel.from(window.localStorage.getItem('model') || '/live2d/live2d.model3.json', { motionPreload: MotionPreloadStrategy.IDLE });
+            const model = await Live2DModel.from(window.localStorage.getItem('model') || 'https://tomisakae.github.io/ShowAI/live2d/live2d.model3.json', { motionPreload: MotionPreloadStrategy.IDLE });
             const pixiModel = model as unknown as PIXI.Container;
             app.stage.addChild(pixiModel);
             pixiModel.position.set(350, 0);
