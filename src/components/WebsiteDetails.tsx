@@ -86,16 +86,16 @@ const WebsiteDetails: React.FC<WebsiteDetailsProps> = ({ website, isStarred, onS
                     <strong className="text-blue-300">Tính năng chính:</strong>
                     <ul className="list-disc list-inside mt-2 text-gray-300">
                         {website.keyFeatures.map((feature, index) => (
-                            <TypeAnimation
-                                key={index}
-                                sequence={[
-                                    feature,
-                                    () => { },
-                                ]}
-                                wrapper="li"
-                                speed={75}
-                                cursor={false}
-                            />
+                            <li key={index}>
+                                <TypeAnimation
+                                    sequence={[
+                                        feature,
+                                        () => { },
+                                    ]}
+                                    speed={75}
+                                    cursor={false}
+                                />
+                            </li>
                         ))}
                     </ul>
                 </div>
