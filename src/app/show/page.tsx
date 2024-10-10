@@ -2,10 +2,10 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { FaSpinner, FaStar, FaTimes } from 'react-icons/fa';
-import Link from 'next/link';
 import WebsiteList from '@/components/WebsiteList';
 import SearchBar from '@/components/SearchBar';
 import ModalPortal from '@/components/ModalPortal';
+import WebsiteDetails from '@/components/WebsiteDetails';
 
 interface AIWebsite {
     _id: string;
@@ -166,49 +166,12 @@ function ShowContent() {
                         )}
                         {error && <p className="text-center text-red-500">{error}</p>}
                         {!isLoading && !error && website && (
-                            <div className="bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg">
-                                <div className="flex flex-col sm:flex-row justify-between items-start mb-4">
-                                    <div className="flex items-center">
-                                        <h2 className="text-xl sm:text-2xl font-bold text-blue-300 mb-2 mr-2">{website.name}</h2>
-                                        <FaStar
-                                            className={`mb-2 cursor-pointer text-2xl ${isStarred ? 'text-yellow-400' : 'text-gray-400'}`}
-                                            onClick={handleStarClick}
-                                        />
-                                    </div>
-                                    <a
-                                        href={website.link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-block bg-[#6366F1] hover:bg-[#93C5FD] text-white font-bold py-2 px-4 rounded-full transition-colors duration-300 mt-4 sm:mt-0"
-                                    >
-                                        Truy cập trang web
-                                    </a>
-                                </div>
-                                <div className="flex flex-wrap gap-2 mt-2 mb-4">
-                                    {website.tags && website.tags.map((tag, index) => (
-                                        <Link href={`/search?tag=${encodeURIComponent(tag)}`} key={index}>
-                                            <span className="bg-blue-900 text-blue-200 text-xs font-medium px-2.5 py-0.5 rounded cursor-pointer hover:bg-blue-800 transition-colors duration-300">
-                                                {tag}
-                                            </span>
-                                        </Link>
-                                    ))}
-                                </div>
-                                <p className="text-gray-300 mb-4 whitespace-pre-wrap">
-                                    {Array.isArray(website.description)
-                                        ? website.description.join('\n\n')
-                                        : website.description}
-                                </p>
-                                {website.keyFeatures && website.keyFeatures.length > 0 && (
-                                    <div>
-                                        <strong className="text-blue-300">Tính năng chính:</strong>
-                                        <ul className="list-disc list-inside mt-2 text-gray-300">
-                                            {website.keyFeatures.map((feature, index) => (
-                                                <li key={index}>{feature}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-                            </div>
+                            <WebsiteDetails
+                                website={website}
+                                isStarred={isStarred}
+                                onStarClick={handleStarClick}
+                                onTagClick={handleTagClick}
+                            />
                         )}
                         {!isLoading && !error && !website && (
                             <p className="text-center">Không có dữ liệu để hiển thị.</p>
