@@ -65,8 +65,13 @@ const Live2DModelComponent = () => {
         // Adjust canvas position and size
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;
         if (canvas) {
+            const screenWidth = window.innerWidth;
+            const baseWidth = 1600;
+            const baseRightPercentage = -14;
+            const rightPercentage = baseRightPercentage + (baseWidth - screenWidth) / 100;
+
             canvas.style.position = 'fixed';
-            canvas.style.right = '-14%';
+            canvas.style.right = `${rightPercentage}%`;
             canvas.style.bottom = '0';
             canvas.style.width = '40%';
             canvas.style.height = 'auto';
