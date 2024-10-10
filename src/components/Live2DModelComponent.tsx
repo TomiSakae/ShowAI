@@ -68,7 +68,7 @@ const Live2DModelComponent = () => {
             const screenWidth = window.innerWidth;
             const baseWidth = 1600;
             const baseRightPercentage = -14;
-            const rightPercentage = baseRightPercentage + (baseWidth - screenWidth) / 50;
+            const rightPercentage = baseRightPercentage + (baseWidth - screenWidth) / 75;
 
             canvas.style.position = 'fixed';
             canvas.style.right = `${rightPercentage}%`;
