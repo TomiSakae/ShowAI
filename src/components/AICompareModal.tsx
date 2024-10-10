@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import 'github-markdown-css/github-markdown.css';
+import 'github-markdown-css/github-markdown-dark.css';
 
 interface AIWebsite {
     _id: string;
