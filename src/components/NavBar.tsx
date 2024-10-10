@@ -50,9 +50,6 @@ const NavBar = () => {
         const newState = !isLive2DModalOpen;
         setIsLive2DModalOpen(newState);
         localStorage.setItem('isLive2DModalOpen', JSON.stringify(newState));
-        if (newState) {
-            window.location.reload();
-        }
     };
 
     return (

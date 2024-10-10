@@ -11,7 +11,12 @@ declare global {
 }
 
 const Live2DModelComponent = () => {
-    const [isLive2DScriptLoaded, setIsLive2DScriptLoaded] = useState(false);
+    const [isLive2DScriptLoaded, setIsLive2DScriptLoaded] = useState(() => {
+        if (typeof sessionStorage !== 'undefined') {
+            return sessionStorage.getItem('isLive2DScriptLoaded') === 'true';
+        }
+        return false;
+    });
     const [isModelLoaded, setIsModelLoaded] = useState(false);
     const appRef = useRef<PIXI.Application | null>(null);
     const [chatMessage, setChatMessage] = useState('');
@@ -106,16 +111,27 @@ const Live2DModelComponent = () => {
         typeWriter(message);
     };
 
+    const handleScriptLoad = () => {
+        setIsLive2DScriptLoaded(true);
+        if (typeof sessionStorage !== 'undefined') {
+            sessionStorage.setItem('isLive2DScriptLoaded', 'true');
+        }
+    };
+
     return (
         <>
-            <Script
-                src="https://tomisakae.id.vn/live2d/core/live2dcubismcore.min.js"
-                onLoad={() => setIsLive2DScriptLoaded(true)}
-            />
-            <Script
-                src="https://tomisakae.id.vn/live2d/core/live2d.min.js"
-                onLoad={() => setIsLive2DScriptLoaded(true)}
-            />
+            {!isLive2DScriptLoaded && (
+                <>
+                    <Script
+                        src="https://tomisakae.id.vn/live2d/core/live2dcubismcore.min.js"
+                        onLoad={handleScriptLoad}
+                    />
+                    <Script
+                        src="https://tomisakae.id.vn/live2d/core/live2d.min.js"
+                        onLoad={handleScriptLoad}
+                    />
+                </>
+            )}
             <canvas id="canvas" />
             {!isModelLoaded && (
                 <div className="fixed right-[1%] bottom-[2%] bg-white p-2.5 rounded-lg z-[1001] flex items-center">
